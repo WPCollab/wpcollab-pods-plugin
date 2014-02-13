@@ -21,16 +21,16 @@ class wpcollab_pods_plugin {
         $id = $post->ID;
         //Profile pages are children of page with ID 23
         if ( $post->post_parent === 23 ) {
-            $out = $this->people( $id );
+            $out = $this->make_it_so( $id, 'page', 'people' );
         }
         //Project CPT
         if ( $post->post_type === 'project' ) {
-            $out = $this->projects( $id );
+            $out = $this->make_it_so( $id, 'project', 'projects' );
         }
         //For profile pages
         //@TODO NEED a way for this not to break for users with no posts.
         if ( is_author() ) {
-            $out = $this->contributor( $id );
+            $out = $this->make_it_so( $id, 'user', 'contributors' );
         }
         //append $out to content if its safe to.
         if ( $out != FALSE ) {
@@ -39,22 +39,30 @@ class wpcollab_pods_plugin {
         return $content;
     }
 
-    function people( $id ) {
-        $obj = $this->get_pods_object( $id, 'page' );
-        $people = $this->get_pods_template( 'people', $obj );
-        return $people;
-    }
-
-    function projects( $id ) {
-        $obj = $this->get_pods_object( $id, 'project' );
-        $projects = $this->get_pods_template( 'projects', $obj );
-        return $projects;
-    }
-
-    function contributor( $id ) {
-        $obj = $this->get_pods_object( $id, 'user' );
-        $contributor = $this->get_pods_template( 'contributors', $obj );
-        return $contributor;
+    /**
+     * Creates our output
+     *
+     * @param int $id Item ID
+     * @param string $pod Pod name
+     * @param string $template Pod name to get
+     *
+     * @return bool|string Pods Template output or false if pod, item and template do not all exist.
+     */
+    function make_it_so( $id, $pod, $template ) {
+        $obj = $this->get_pods_object( $id, $pod );
+        $it = $this->get_pods_template( $template, $obj );
+        /**
+         * Filter output
+         *
+         * Use to do something totally diffrent than Pods Template
+         *
+         * @param string $it The output
+         * @param obj $obj The Pods object
+         *
+         * @since 0.0.1
+         */
+        $it = apply_filters( 'wpcollab_pods_plugin_it', $it, $obj );
+        return $it;
     }
 
     /**
