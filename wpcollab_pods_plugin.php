@@ -8,7 +8,7 @@ License: GPL v2+
 class wpcollab_pods_plugin {
 
     function __construct() {
-        add_filter( 'the_content', 'content_filter', 20 );
+        add_filter( 'the_content', array( $this, 'content_filter' ) , 20 );
     }
 
     /**
