@@ -1,0 +1,7 @@
+ul#contributor-links li, ul#proj-contributors li {
+    display: inline;
+    margin: 0 6px;
+}
+ul#contributor-links, ul.wpcp-list {
+    list-style: none;
+}
